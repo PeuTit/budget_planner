@@ -46,3 +46,17 @@ And so on....
 ### Special case:
 - January will always start on the 01.
 - December will always end on the 31.
+
+## Input:
+I would like the input to be as simple as the year in String or Number.
+
+## Output:
+Print each months with its corresponding weeks.
+
+## Pipeline | Process
+
+- Receive a year as user input.
+- Create a reference to the first date of the year (January first).
+- Create a Week struct.
+- Generate a list of all the weeks in a year with their number, start & end date.
+- Associate each week with a month
