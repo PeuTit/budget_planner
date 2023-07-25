@@ -1,7 +1,6 @@
 # Budget Planner
 
 ## Goals
-
 Split a calendar year into 12 "Budget months" with a year as input.
 
 ### A calendar year:
@@ -27,7 +26,7 @@ Week 2: 08 to 14
 Week 3: 15 to 21
 Week 4: 22 to 28
 
-We still have 3 days left in January, applying the rules above we don't met the first criteria (day_left >= 4 == false).
+We still have 3 days left in January. When applying the rules above, we don't meet the first criteria (day_left >= 4 == false).
 So this week will be attributed to the next month, February.
 
 February -> 29 days
@@ -36,27 +35,30 @@ Week 2: 05 to 11
 Week 3: 12 to 18
 Week 4: 19 to 25
 
-In this case, we have 4 days left in January,
-we met the requirement for the first rule (day_left >= 4 == true) and the second one (nbr_of_weeks < 5).
+In this case, we have 4 days left in February,
+We meet the requirement for the first rule (day_left >= 4 == true) and the second one (nbr_of_weeks < 5).
 
 Week 5: 26 to 03
 
-And so on....
+And so on:
+
+March...
 
 ### Special case:
 - January will always start on the 01.
 - December will always end on the 31.
 
 ## Input:
-I would like the input to be as simple as the year in String or Number.
+I would like the input to be as simple (e.g. the year should be formated as String or Number).
 
 ## Output:
 Print each months with its corresponding weeks.
 
 ## Pipeline | Process
-
 - Receive a year as user input.
-- Create a reference to the first date of the year (January first).
+- Create a reference to the first date of the year (January 01).
+- Create a reference to the last date of the year (December 31).
 - Create a Week struct.
-- Generate a list of all the weeks in a year with their number, start & end date.
+- Generate a list of all the weeks in a year with the start, end date & day of start.
 - Associate each week with a month
+- Display each month with its associated weeks.
