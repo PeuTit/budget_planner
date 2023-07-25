@@ -1,3 +1,5 @@
+use std::env;
+
 use chrono::Month::*;
 use chrono::{Datelike, Duration, Month as ChronoMonth, NaiveDate, NaiveWeek, Weekday};
 
@@ -8,7 +10,7 @@ struct Week {
     start_day: Weekday,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 struct Month {
     name: ChronoMonth,
     weeks: Vec<Week>,
@@ -229,14 +231,16 @@ fn iter_days(start_date: NaiveDate, end_date: NaiveDate) -> Vec<NaiveDate> {
         .collect::<Vec<NaiveDate>>()
 }
 
-fn split_in_month(weeks: Vec<Week>, month: ChronoMonth) -> Vec<Week> {
-    weeks
+fn split_in_month(weeks: Vec<Week>, month: ChronoMonth) -> Month {
+    let weeks = weeks
         .into_iter()
         .filter(|week| is_week_owned_by_month(*week, month))
-        .collect()
+        .collect();
+
+    Month { name: month, weeks }
 }
 
-fn split_in_months(weeks: Vec<Week>) -> Vec<Vec<Week>> {
+fn split_in_months(weeks: Vec<Week>) -> Vec<Month> {
     let months: Vec<ChronoMonth> = vec![
         January, February, March, April, May, June, July, August, September, October, November,
         December,
@@ -251,43 +255,53 @@ fn split_in_months(weeks: Vec<Week>) -> Vec<Vec<Week>> {
     res
 }
 
+fn display_year(year: i32, months: Vec<Month>) -> () {
+    println!("{}", year);
+    for month in months {
+        println!("{:?} - {} weeks", month.name, month.weeks.len());
+        display_weeks(month.weeks);
+    }
+}
+
+fn display_weeks(weeks: Vec<Week>) -> () {
+    for week in weeks {
+        display_week(week);
+    }
+}
+
+fn display_week(week: Week) -> () {
+    println!("{} - {}", week.start_date.format("%d").to_string(), week.end_date.format("%d").to_string());
+}
+
+fn parse_arguments(mut args: impl Iterator<Item = String>) -> i32 {
+    args.next();
+
+    let year = match args.next() {
+        Some(year) => year,
+        None => panic!(),
+    };
+
+    year.parse().unwrap()
+}
+
 fn main() {
+    let args = env::args();
+    println!("{:?}", args);
+
     let carret = "-".repeat(6);
     println!("{} Budget Planner! {}", carret, carret);
 
-    let _fake_user_input = String::from("2022");
-    let fake_user_input_parsed: i32 = 2023;
+    let fake_user_input_parsed: i32 = parse_arguments(args);
     let first_year_day: NaiveDate = first_day_year(fake_user_input_parsed);
 
     let first_week: Week = define_first_week(first_year_day);
     let last_week: Week = define_last_week(last_day_year(fake_user_input_parsed));
 
-    let first_day_normal_week: NaiveDate = add_day(first_week.end_date, 1);
-    let last_day_normal_week: NaiveDate = last_week.start_date;
-    println!("{:?}", first_day_normal_week);
-    println!("{:?}", last_day_normal_week);
-
     let year = define_weeks_in_year(first_week.start_date, last_week.end_date);
 
-    let date1 = NaiveDate::from_ymd_opt(2023, 05, 01).unwrap();
-    let date2 = NaiveDate::from_ymd_opt(2023, 05, 07).unwrap();
+    let months: Vec<Month> = split_in_months(year);
 
-    let test = year.contains(&Week {
-        start_date: date1,
-        end_date: date2,
-        start_day: date1.weekday(),
-    });
-    println!("{}", test);
-
-    for week in &year {
-        println!("{:?}", week);
-    }
-
-    let res = split_in_months(year);
-
-    for r in res {
-        println!("{:?}", r.len());
-    }
+    display_year(fake_user_input_parsed, months);
 }
 
 #[cfg(test)]
@@ -753,9 +767,9 @@ mod test {
 
         let weeks: Vec<Week> = define_weeks_in_year(start_date, end_date);
 
-        let result: Vec<Week> = split_in_month(weeks, month);
+        let result: Month = split_in_month(weeks, month);
 
-        assert_eq!(result.len(), 4);
+        assert_eq!(result.weeks.len(), 4);
     }
 
     #[test]
@@ -768,7 +782,7 @@ mod test {
 
         let result = split_in_month(weeks, month);
 
-        assert_eq!(result.len(), 5);
+        assert_eq!(result.weeks.len(), 5);
     }
 
     #[test]
@@ -778,18 +792,24 @@ mod test {
 
         let weeks: Vec<Week> = define_weeks_in_year(start_date, end_date);
 
-        let result: Vec<Vec<Week>> = split_in_months(weeks);
+        let result: Vec<Month> = split_in_months(weeks);
 
         assert_eq!(result.len(), 12);
         assert_eq!(
             result
                 .clone()
                 .into_iter()
-                .map(|week| week.len())
+                .map(|month| month.weeks.len())
                 .collect::<Vec<usize>>(),
             vec![4, 5, 4, 4, 5, 4, 4, 5, 4, 5, 4, 5]
         );
-        assert_eq!(result.into_iter().map(|week| week.len()).sum::<usize>(), 53);
+        assert_eq!(
+            result
+                .into_iter()
+                .map(|month| month.weeks.len())
+                .sum::<usize>(),
+            53
+        );
     }
 
     #[test]
@@ -799,17 +819,23 @@ mod test {
 
         let weeks: Vec<Week> = define_weeks_in_year(start_date, end_date);
 
-        let result: Vec<Vec<Week>> = split_in_months(weeks);
+        let result: Vec<Month> = split_in_months(weeks);
 
         assert_eq!(result.len(), 12);
         assert_eq!(
             result
                 .clone()
                 .into_iter()
-                .map(|week| week.len())
+                .map(|month| month.weeks.len())
                 .collect::<Vec<usize>>(),
             vec![5, 4, 5, 4, 4, 5, 4, 5, 4, 4, 5, 4]
         );
-        assert_eq!(result.into_iter().map(|week| week.len()).sum::<usize>(), 53);
+        assert_eq!(
+            result
+                .into_iter()
+                .map(|month| month.weeks.len())
+                .sum::<usize>(),
+            53
+        );
     }
 }
