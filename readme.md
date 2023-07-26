@@ -1,5 +1,49 @@
 # Budget Planner
 
+A CLI tool to split a year into budget month. It makes personnal budgeting a breeze.
+
+## How to use
+
+Just specify the year you want to split like so:
+```
+budget_planner --year 2023
+```
+The output should resemble this:
+```
+------ Budget Planner! ------
+2023
+January - 5 weeks
+01 - 01
+02 - 08
+09 - 15
+16 - 22
+23 - 29
+February ...
+```
+
+## Installation
+
+Only local build is available for now!
+
+## Building
+
+You only need a valid [Rust installation](https://www.rust-lang.org/tools/install).
+```
+$ git clone https://github.com/PeuTit/budget_planner
+$ cd budget_planner
+$ cargo build --release
+$ ./target/release/budget_planner --version
+budget_planner 1.0.0
+```
+
+## Testing
+
+You can run all tests (unit & integration) with:
+
+```
+cargo test
+```
+
 ## Goals
 Split a calendar year into 12 "Budget months" with a year as input.
 
@@ -62,3 +106,11 @@ Print each months with its corresponding weeks.
 - Generate a list of all the weeks in a year with the start, end date & day of start.
 - Associate each week with a month
 - Display each month with its associated weeks.
+
+### Functionality to test
+
+- What happens when the user doesn't supply any arguments?
+- What happens when the user supply the wrong argument?
+- What happens when the user doesn't supply any flags?
+- What happens when the user supply the wrong flag?
+- What happens when the user supply everything correctly?

@@ -1,9 +1,23 @@
 [package]
 name = "budget_planner"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
+authors = ["PeuTit"]
+license = "MIT"
+description = "A cli app used to split a year into budget months to help with personal budget planning"
+readme = "readme.md"
+homepage = "https://github.com/PeuTit/budget_planner"
+repository = "https://github.com/PeuTit/budget_planner"
+keywords = ["cli", "budget"]
+categories = ["command-line-utilities"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 chrono = "0.4.24"
+clap = { version = "4.3.19", features = ["derive"] }
+
+[dev-dependencies]
+assert_cmd = "2.0.12"
+predicates = "3.0.3"
