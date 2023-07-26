@@ -71,7 +71,7 @@ January -> 31 days
 * Week 3: 15 to 21
 * Week 4: 22 to 28
 
-We still have 3 days left in January. When applying the rules above, we don't meet the first criteria (day_left >= 4 == false).
+We still have 3 days left in January. When applying the rules above, we don't meet the first criteria (`day_left` >= 4 == false).
 So this week will be attributed to the next month, February.
 
 February -> 29 days
@@ -81,9 +81,9 @@ February -> 29 days
 * Week 4: 19 to 25
 
 In this case, we have 4 days left in February,
-We meet the requirement for the first rule (day_left >= 4 == true) and the second one (nbr_of_weeks < 5).
+We meet the requirement for the first rule (`day_left` >= 4 == true) and the second one (`nbr_of_weeks` < 5).
 
-Week 5: 26 to 03
+* Week 5: 26 to 03
 
 And so on:
 
