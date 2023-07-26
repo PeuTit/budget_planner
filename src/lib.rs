@@ -1,6 +1,4 @@
 use std::error::Error;
-use std::num::ParseIntError;
-use std::process;
 
 use chrono::Month::*;
 use chrono::{Datelike, Duration, Month as ChronoMonth, NaiveDate, NaiveWeek, Weekday};
@@ -279,44 +277,27 @@ fn display_week(week: Week) -> () {
     );
 }
 
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
 pub struct Config {
+    #[arg(short, long)]
     pub year: i32,
 }
 
-impl Config {
-    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
-        args.next();
-
-        let year = match args.next() {
-            Some(year) => year,
-            None => "no args found!".to_string(),
-        };
-
-        let year = Self::parse_argument(year).unwrap_or_else(|err| {
-            eprintln!("Problem parsing year argument: {}", err);
-            process::exit(1);
-        });
-
-        Ok(Config { year })
-    }
-
-    fn parse_argument(arg: String) -> Result<i32, ParseIntError> {
-        arg.parse()
-    }
-}
-
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let fake_user_input_parsed: i32 = config.year;
-    let first_year_day: NaiveDate = first_day_year(fake_user_input_parsed);
+    let input_parsed: i32 = config.year;
+    let first_year_day: NaiveDate = first_day_year(input_parsed);
 
     let first_week: Week = define_first_week(first_year_day);
-    let last_week: Week = define_last_week(last_day_year(fake_user_input_parsed));
+    let last_week: Week = define_last_week(last_day_year(input_parsed));
 
     let year = define_weeks_in_year(first_week.start_date, last_week.end_date);
 
     let months: Vec<Month> = split_in_months(year);
 
-    display_year(fake_user_input_parsed, months);
+    display_year(input_parsed, months);
 
     Ok(())
 }

@@ -1,14 +1,10 @@
-use std::{process, env};
+use std::process;
 
 use budget_planner::Config;
+use clap::Parser;
 
 fn main() {
-    let args = env::args();
-
-    let config: Config = Config::build(args).unwrap_or_else(|err| {
-        eprintln!("Problem parsing arguments: {}", err);
-        process::exit(1);
-    });
+    let config = Config::parse();
 
     let carret = "-".repeat(6);
     println!("{} Budget Planner! {}", carret, carret);
