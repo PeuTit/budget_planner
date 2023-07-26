@@ -1,4 +1,6 @@
-use std::env;
+use std::error::Error;
+use std::num::ParseIntError;
+use std::{env, process};
 
 use chrono::Month::*;
 use chrono::{Datelike, Duration, Month as ChronoMonth, NaiveDate, NaiveWeek, Weekday};
@@ -270,28 +272,41 @@ fn display_weeks(weeks: Vec<Week>) -> () {
 }
 
 fn display_week(week: Week) -> () {
-    println!("{} - {}", week.start_date.format("%d").to_string(), week.end_date.format("%d").to_string());
+    println!(
+        "{} - {}",
+        week.start_date.format("%d").to_string(),
+        week.end_date.format("%d").to_string()
+    );
 }
 
-fn parse_arguments(mut args: impl Iterator<Item = String>) -> i32 {
-    args.next();
-
-    let year = match args.next() {
-        Some(year) => year,
-        None => panic!(),
-    };
-
-    year.parse().unwrap()
+struct Config {
+    year: i32,
 }
 
-fn main() {
-    let args = env::args();
-    println!("{:?}", args);
+impl Config {
+    fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
 
-    let carret = "-".repeat(6);
-    println!("{} Budget Planner! {}", carret, carret);
+        let year = match args.next() {
+            Some(year) => year,
+            None => "no args found!".to_string(),
+        };
 
-    let fake_user_input_parsed: i32 = parse_arguments(args);
+        let year = Self::parse_argument(year).unwrap_or_else(|err| {
+            println!("Problem parsing year argument: {}", err);
+            process::exit(1);
+        });
+
+        Ok(Config { year })
+    }
+
+    fn parse_argument(arg: String) -> Result<i32, ParseIntError> {
+        arg.parse()
+    }
+}
+
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    let fake_user_input_parsed: i32 = config.year;
     let first_year_day: NaiveDate = first_day_year(fake_user_input_parsed);
 
     let first_week: Week = define_first_week(first_year_day);
@@ -302,6 +317,26 @@ fn main() {
     let months: Vec<Month> = split_in_months(year);
 
     display_year(fake_user_input_parsed, months);
+
+    Ok(())
+}
+
+fn main() {
+    let args = env::args();
+    println!("{:?}", args);
+
+    let config: Config = Config::build(args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
+
+    let carret = "-".repeat(6);
+    println!("{} Budget Planner! {}", carret, carret);
+
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    };
 }
 
 #[cfg(test)]
