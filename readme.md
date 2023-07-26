@@ -64,20 +64,21 @@ When a week overlap between two months, we apply the following rule to decide wh
 
 #### Example:
 Year 2024
+
 January -> 31 days
-Week 1: 01 to 07
-Week 2: 08 to 14
-Week 3: 15 to 21
-Week 4: 22 to 28
+* Week 1: 01 to 07
+* Week 2: 08 to 14
+* Week 3: 15 to 21
+* Week 4: 22 to 28
 
 We still have 3 days left in January. When applying the rules above, we don't meet the first criteria (day_left >= 4 == false).
 So this week will be attributed to the next month, February.
 
 February -> 29 days
-Week 1: 29 to 04
-Week 2: 05 to 11
-Week 3: 12 to 18
-Week 4: 19 to 25
+* Week 1: 29 to 04
+* Week 2: 05 to 11
+* Week 3: 12 to 18
+* Week 4: 19 to 25
 
 In this case, we have 4 days left in February,
 We meet the requirement for the first rule (day_left >= 4 == true) and the second one (nbr_of_weeks < 5).
