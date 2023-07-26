@@ -293,7 +293,7 @@ impl Config {
         };
 
         let year = Self::parse_argument(year).unwrap_or_else(|err| {
-            println!("Problem parsing year argument: {}", err);
+            eprintln!("Problem parsing year argument: {}", err);
             process::exit(1);
         });
 
