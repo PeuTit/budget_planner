@@ -1,6 +1,7 @@
 use std::process;
 
-use budget_planner::Config;
+use budget_planner::cli::Config;
+use budget_planner::cli::run;
 use clap::Parser;
 
 fn main() {
@@ -9,7 +10,7 @@ fn main() {
     let carret = "-".repeat(6);
     println!("{} Budget Planner! {}", carret, carret);
 
-    if let Err(e) = budget_planner::run(config) {
+    if let Err(e) = run(config) {
         eprintln!("Application error: {}", e);
         process::exit(1);
     };
