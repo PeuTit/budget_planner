@@ -3,14 +3,16 @@ use std::error::Error;
 use chrono::Month::*;
 use chrono::{Datelike, Duration, Month as ChronoMonth, NaiveDate, NaiveWeek, Weekday};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 struct Week {
     start_date: NaiveDate,
     end_date: NaiveDate,
     start_day: Weekday,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 struct Month {
     name: ChronoMonth,
     weeks: Vec<Week>,
@@ -232,7 +234,7 @@ fn iter_days(start_date: NaiveDate, end_date: NaiveDate) -> Vec<NaiveDate> {
 }
 
 fn split_in_month(weeks: Vec<Week>, month: ChronoMonth) -> Month {
-    let weeks = weeks
+    let weeks: Vec<Week> = weeks
         .into_iter()
         .filter(|week| is_week_owned_by_month(*week, month))
         .collect();
@@ -255,28 +257,6 @@ fn split_in_months(weeks: Vec<Week>) -> Vec<Month> {
     res
 }
 
-fn display_year(year: i32, months: Vec<Month>) -> () {
-    println!("{}", year);
-    for month in months {
-        println!("{:?} - {} weeks", month.name, month.weeks.len());
-        display_weeks(month.weeks);
-    }
-}
-
-fn display_weeks(weeks: Vec<Week>) -> () {
-    for week in weeks {
-        display_week(week);
-    }
-}
-
-fn display_week(week: Week) -> () {
-    println!(
-        "{} - {}",
-        week.start_date.format("%d").to_string(),
-        week.end_date.format("%d").to_string()
-    );
-}
-
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -284,6 +264,12 @@ use clap::Parser;
 pub struct Config {
     #[arg(short, long)]
     pub year: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+struct Address {
+    street: String,
+    city: String,
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
@@ -297,7 +283,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let months: Vec<Month> = split_in_months(year);
 
-    display_year(input_parsed, months);
+    let j = serde_json::to_string(&months)?;
+    println!("{}", j);
 
     Ok(())
 }

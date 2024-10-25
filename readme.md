@@ -1,6 +1,6 @@
 # Budget Planner
 
-A CLI tool to split a year into budget month. It makes personnal budgeting a breeze.
+A CLI tool to split a year into budget month. It makes personal budgeting a breeze.
 
 ## How to use
 
@@ -8,17 +8,32 @@ Just specify the year you want to split like so:
 ```
 budget_planner --year 2023
 ```
-The output should resemble this:
+
+The output will be a Json object. Here is the result with `jq`:
 ```
------- Budget Planner! ------
-2023
-January - 5 weeks
-01 - 01
-02 - 08
-09 - 15
-16 - 22
-23 - 29
-February ...
+[
+  {
+    "name": "January",
+    "weeks": [
+      {
+        "start_date": "2024-01-01",
+        "end_date": "2024-01-07",
+        "start_day": "Mon"
+      },
+      {
+        "start_date": "2024-01-08",
+        "end_date": "2024-01-14",
+        "start_day": "Mon"
+      },
+    ]
+  },
+  {
+    "name": "February",
+    "weeks": [
+        ...
+    ]
+  }
+]
 ```
 
 ## Installation
