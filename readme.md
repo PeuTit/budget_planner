@@ -48,7 +48,7 @@ $ git clone https://github.com/PeuTit/budget_planner
 $ cd budget_planner
 $ cargo build --release
 $ ./target/release/budget_planner --version
-budget_planner 1.0.0
+budget_planner x.x.x
 ```
 
 ## Testing
